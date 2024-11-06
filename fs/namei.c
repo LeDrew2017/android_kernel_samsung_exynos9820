@@ -51,9 +51,6 @@
 #include <linux/susfs.h>
 #endif
 
-#define CREATE_TRACE_POINTS
-#include <trace/events/namei.h>
-
 /* [Feb-1997 T. Schoebel-Theuer]
  * Fundamental changes in the pathname lookup mechanisms (namei)
  * were necessary because of omirr.  The reason is that omirr needs
