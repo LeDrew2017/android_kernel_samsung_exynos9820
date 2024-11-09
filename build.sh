@@ -17,7 +17,7 @@ defconfig_gcov="exynos9820-$2-gcov_defconfig"
 defconfig_pgo="exynos9820-$2-pgo_defconfig"
 
 mode="$1"
-llvm_mode="$3"
+llvm="$3"
 echo "Mode: $mode"
 if [ "$mode" = "gcov" ]; then
     cp arch/arm64/configs/$defconfig_original arch/arm64/configs/$defconfig_gcov
