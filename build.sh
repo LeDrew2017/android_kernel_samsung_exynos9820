@@ -17,6 +17,7 @@ defconfig_gcov="exynos9820-$2-gcov_defconfig"
 defconfig_pgo="exynos9820-$2-pgo_defconfig"
 
 mode="$1"
+llvm_mode="$3"
 echo "Mode: $mode"
 if [ "$mode" = "gcov" ]; then
     cp arch/arm64/configs/$defconfig_original arch/arm64/configs/$defconfig_gcov
@@ -34,7 +35,14 @@ elif [ "$mode" = "none" ]; then
 fi
 
 export ARCH="arm64"
-export CROSS_COMPILE="aarch64-elf-"
+
+llvm_flag=""
+if [ "$llvm" = "llvm" ]; then
+    llvm_flag="LLVM=1"
+    msg "LLVM enabled for this build."
+else
+    msg "LLVM not enabled; using default GCC build."
+fi
 
 msg "Generating defconfig from \`make $defconfig\`..."
 
@@ -45,9 +53,9 @@ fi
 
 msg "Begin building kernel..."
 
-make O=out ARCH="arm64" -j"$(nproc --all)" prepare
+make O=out ARCH="arm64" -j"$(nproc --all)" $llvm_flag prepare
 
-if ! make O=out ARCH="arm64" -j"$(nproc --all)"; then
+if ! make O=out ARCH="arm64" -j"$(nproc --all)" $llvm_flag; then
     err "Failed building kernel, probably the toolchain is not compatible with the kernel, or kernel source problem"
     exit 3
 fi
