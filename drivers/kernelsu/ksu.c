@@ -28,6 +28,10 @@ unsigned int get_ksu_state(void)
 	return enable_kernelsu;
 }
 
+#ifdef CONFIG_KSU_SUSFS
+#include <linux/susfs.h>
+#endif
+
 static struct workqueue_struct *ksu_workqueue;
 
 bool ksu_queue_work(struct work_struct *work)
@@ -54,7 +58,7 @@ extern void ksu_sucompat_exit();
 extern void ksu_ksud_init();
 extern void ksu_ksud_exit();
 
-int __init kernelsu_init(void)
+int __init ksu_kernelsu_init(void)
 {
 	if (enable_kernelsu < 1) {
 		pr_info_once(" is disabled");
@@ -69,6 +73,10 @@ int __init kernelsu_init(void)
 	pr_alert("**                                                         **");
 	pr_alert("**     NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE    **");
 	pr_alert("*************************************************************");
+#endif
+
+#ifdef CONFIG_KSU_SUSFS
+	susfs_init();
 #endif
 
 	ksu_core_init();
@@ -94,7 +102,7 @@ int __init kernelsu_init(void)
 	return 0;
 }
 
-void kernelsu_exit(void)
+void ksu_kernelsu_exit(void)
 {
 	if (enable_kernelsu < 1)
 		return;
@@ -113,8 +121,8 @@ void kernelsu_exit(void)
 	ksu_core_exit();
 }
 
-module_init(kernelsu_init);
-module_exit(kernelsu_exit);
+module_init(ksu_kernelsu_init);
+module_exit(ksu_kernelsu_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("weishu");
